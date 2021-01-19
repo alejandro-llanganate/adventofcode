@@ -3,7 +3,7 @@ let data = require('../assets/lector')('../data/day24.txt');
 const mosaicos = data.split('\n')
                      .filter(x => x);
 
-let baldozasNegras = new Set();
+let baldosasNegras = new Set();
 
 
 /************************* PARTE  1 ******************************/
@@ -19,24 +19,20 @@ const identificarCoordenadas = (x, y) => {
 }
 
 for (const direccion of mosaicos) {
-    const direcciones = [...direccion.matchAll(/e|se|sw|w|nw|ne/g)].map(e => e[0]);
-    let x = 0;
-    let y = 0;
-
-    for (const direction of direcciones) {
-        x += obtenerDeltas[direction].dx;
-        y += obtenerDeltas[direction].dy;
+    const direcciones = [...direccion.matchAll(/ne|se|e|w|sw|nw/g)].map(e => e[0]);
+    let x = 0, y = 0;
+    for (const direccion of direcciones) {
+        x += obtenerDeltas[direccion].dx;
+        y += obtenerDeltas[direccion].dy;
     }
-    
     const key = identificarCoordenadas(x, y);
-    if(baldozasNegras.has(key)) {
-        baldozasNegras.delete(key);
+    if(baldosasNegras.has(key)) {
+        baldosasNegras.delete(key);
     } else {
-        baldozasNegras.add(key);
+        baldosasNegras.add(key);
     }
 }
-
-console.log(`Parte 1:\n${baldozasNegras.size}`);
+console.log(`Parte 1:\n${baldosasNegras.size}`);
 
 /************************* PARTE  2 ******************************/
 
@@ -53,8 +49,8 @@ const obtenerVecinos = (x, y) => {
 }
 
 for (let i = 1; i <= dias; i++) {
-    let nuevasBalfozasNegras = new Set();
-    const keys = baldozasNegras.keys();
+    let nuevasBaldosasNegras = new Set();
+    const keys = baldosasNegras.keys();
 
     for (const baldoza of keys) {
         const [x, y] = baldoza.split('#').map(x => parseInt(x));
@@ -65,18 +61,18 @@ for (let i = 1; i <= dias; i++) {
         for(const celda of celdasContiguas) {
             const actualID = identificarCoordenadas(celda.x, celda.y);
             const vecinos = obtenerVecinos(celda.x, celda.y);
-            const totalBaldozasNegras = vecinos.filter(n => baldozasNegras.has(identificarCoordenadas(n.x, n.y))).length;
+            const totalBaldosasNegras = vecinos.filter(n => baldosasNegras.has(identificarCoordenadas(n.x, n.y))).length;
 
-            if(baldozasNegras.has(actualID)) {
-                (totalBaldozasNegras > 2 || totalBaldozasNegras === 0) ?
-                    nuevasBalfozasNegras.delete(actualID) :
-                    nuevasBalfozasNegras.add(actualID);
+            if(baldosasNegras.has(actualID)) {
+                (totalBaldosasNegras > 2 || totalBaldosasNegras === 0) ?
+                    nuevasBaldosasNegras.delete(actualID) :
+                    nuevasBaldosasNegras.add(actualID);
             } else {
-                if(totalBaldozasNegras === 2)
-                    nuevasBalfozasNegras.add(actualID);
+                if(totalBaldosasNegras === 2)
+                    nuevasBaldosasNegras.add(actualID);
             }            
         }
     }
-    baldozasNegras = nuevasBalfozasNegras;
+    baldosasNegras = nuevasBaldosasNegras;
 }
-console.log(`Parte 2:\n${baldozasNegras.size}`);   
+console.log(`Parte 2:\n${baldosasNegras.size}`);   
